@@ -1,3 +1,5 @@
+use rand::Rng;
+
 const TEST_PASSAGES: &[&str] = &[
     "The quick brown fox jumps over the lazy dog.",
     "Never underestimate the power of a good book and a warm cup of coffee.",
@@ -7,7 +9,8 @@ const TEST_PASSAGES: &[&str] = &[
 ];
 
 fn main() {
-    for passage in TEST_PASSAGES {
-        println!("{}", passage);
-    }
+    let mut rng = rand::thread_rng();
+    let random_index = rng.gen_range(0..TEST_PASSAGES.len());
+    let random_passage = TEST_PASSAGES[random_index];
+    println!("{}", random_passage);
 }
