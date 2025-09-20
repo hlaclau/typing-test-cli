@@ -7,3 +7,4 @@ edition = "2024"
 rand = "0.8"
 ratatui = "0.26"
 crossterm = "0.27"
+# catppuccin = { version = "2.5", features = ["ratatui"] }

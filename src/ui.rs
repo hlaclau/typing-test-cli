@@ -5,6 +5,7 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, Paragraph, Wrap},
     Frame,
 };
+// Using standard colors for now
 
 use crate::typing::TypingTest;
 
@@ -28,7 +29,7 @@ pub fn render(f: &mut Frame, typing_test: &TypingTest) {
     let title = Paragraph::new("Typing Test CLI")
         .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
         .alignment(Alignment::Center)
-        .block(Block::default().borders(Borders::ALL));
+        .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Magenta)));
     f.render_widget(title, chunks[0]);
 
     // Instructions
@@ -62,7 +63,7 @@ fn create_instructions(typing_test: &TypingTest) -> Paragraph<'_> {
     } else if typing_test.is_test_started() {
         Style::default().fg(Color::Cyan)
     } else {
-        Style::default().fg(Color::Blue)
+        Style::default().fg(Color::Magenta)
     };
 
     Paragraph::new(instruction_text)
@@ -90,7 +91,7 @@ fn create_text_display(typing_test: &TypingTest) -> Paragraph<'_> {
     }
     
     Paragraph::new(Line::from(spans))
-        .block(Block::default().title("Text to Type").borders(Borders::ALL))
+        .block(Block::default().title("Text to Type").borders(Borders::ALL).border_style(Style::default().fg(Color::Magenta)))
         .wrap(Wrap { trim: true })
 }
 
@@ -102,8 +103,8 @@ fn create_progress_bar(typing_test: &TypingTest) -> Gauge<'_> {
     };
 
     Gauge::default()
-        .block(Block::default().title("Progress").borders(Borders::ALL))
-        .gauge_style(Style::default().fg(Color::Blue))
+        .block(Block::default().title("Progress").borders(Borders::ALL).border_style(Style::default().fg(Color::Magenta)))
+        .gauge_style(Style::default().fg(Color::Magenta))
         .ratio(progress_ratio)
 }
 
@@ -116,21 +117,6 @@ fn create_stats_display(typing_test: &TypingTest) -> Paragraph<'_> {
             typing_test.correct_chars(),
             typing_test.total_chars()
         )
-    } else if typing_test.is_test_started() {
-        let elapsed = typing_test.elapsed_time().unwrap_or(0);
-        let current_wpm = if elapsed > 0 {
-            (typing_test.correct_chars() as f64 / (elapsed as f64 / 60.0)) as u32
-        } else {
-            0
-        };
-        
-        format!(
-            "⏱️  Time: {}s | Correct: {}/{} | Current WPM: {}",
-            elapsed,
-            typing_test.correct_chars(),
-            typing_test.total_chars(),
-            current_wpm
-        )
     } else {
         "Ready to start typing test...".to_string()
     };
@@ -138,5 +124,5 @@ fn create_stats_display(typing_test: &TypingTest) -> Paragraph<'_> {
     Paragraph::new(stats_text)
         .style(Style::default().fg(Color::White))
         .alignment(Alignment::Center)
-        .block(Block::default().title("Statistics").borders(Borders::ALL))
+        .block(Block::default().title("Statistics").borders(Borders::ALL).border_style(Style::default().fg(Color::Magenta)))
 }
