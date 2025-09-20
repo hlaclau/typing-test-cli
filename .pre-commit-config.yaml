@@ -1,0 +1,47 @@
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix]
+      - id: debug-statements
+      - id: detect-private-key
+
+  # Conventional commits validation
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.4.0
+    hooks:
+      - id: conventional-pre-commit
+        args: [feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert]
+        stages: [commit-msg]
+
+  # Rust formatting and linting
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: rustfmt
+        entry: bash -c 'rustfmt --edition 2021'
+        language: system
+        files: \.rs$
+
+      - id: clippy
+        name: clippy
+        entry: bash -c 'cargo clippy --all-targets --all-features -- -D warnings'
+        language: system
+        pass_filenames: false
+
+      - id: cargo-check
+        name: cargo check
+        entry: bash -c 'cargo check'
+        language: system
+        pass_filenames: false
