@@ -33,7 +33,7 @@ impl TypingTest {
         let mut rng = rand::thread_rng();
         let random_index = rng.gen_range(0..TEST_PASSAGES.len());
         let target_text = TEST_PASSAGES[random_index].to_string();
-        
+
         Self {
             target_text,
             total_chars: TEST_PASSAGES[random_index].len(),
@@ -55,7 +55,7 @@ impl TypingTest {
         self.user_input.push(c);
         self.current_char = self.user_input.len();
         self.update_stats();
-        
+
         // Check if test is completed
         if self.user_input.len() >= self.target_text.len() {
             self.complete_test();
@@ -87,19 +87,19 @@ impl TypingTest {
         if let Some(start_time) = self.start_time {
             let duration = start_time.elapsed();
             let time_minutes = duration.as_secs_f64() / 60.0;
-            
+
             self.wpm = if time_minutes > 0.0 {
                 (self.user_input.split_whitespace().count() as f64 / time_minutes) as u32
             } else {
                 0
             };
-            
-            self.accuracy = if self.target_text.len() > 0 {
+
+            self.accuracy = if !self.target_text.is_empty() {
                 (self.correct_chars as f64 / self.target_text.len() as f64) * 100.0
             } else {
                 0.0
             };
-            
+
             self.test_completed = true;
             self.show_results = true;
         }
@@ -161,6 +161,7 @@ impl TypingTest {
         self.show_results
     }
 
+    #[allow(dead_code)]
     pub fn elapsed_time(&self) -> Option<u64> {
         self.start_time.map(|start| start.elapsed().as_secs())
     }

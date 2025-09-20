@@ -3,10 +3,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{
-    backend::CrosstermBackend,
-    Terminal,
-};
+use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 
 use crate::typing::TypingTest;
@@ -25,16 +22,22 @@ impl App {
     pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         // Setup terminal
         enable_raw_mode().map_err(|e| {
-            eprintln!("Warning: Could not enable raw mode: {}. Running in fallback mode.", e);
+            eprintln!(
+                "Warning: Could not enable raw mode: {}. Running in fallback mode.",
+                e
+            );
             e
         })?;
-        
+
         let mut stdout = io::stdout();
         execute!(stdout, EnterAlternateScreen, EnableMouseCapture).map_err(|e| {
-            eprintln!("Warning: Could not enter alternate screen: {}. Running in fallback mode.", e);
+            eprintln!(
+                "Warning: Could not enter alternate screen: {}. Running in fallback mode.",
+                e
+            );
             e
         })?;
-        
+
         let backend = CrosstermBackend::new(stdout);
         let mut terminal = Terminal::new(backend)?;
 
@@ -61,24 +64,29 @@ impl App {
         loop {
             terminal.draw(|f| crate::ui::render(f, &self.typing_test))?;
 
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') => return Ok(()),
-                        KeyCode::Char('r') if self.typing_test.show_results() => {
-                            self.typing_test.reset();
-                        }
-                        KeyCode::Enter if !self.typing_test.is_test_started() => {
-                            self.typing_test.start_test();
-                        }
-                        KeyCode::Char(c) if self.typing_test.is_test_started() && !self.typing_test.is_test_completed() => {
-                            self.typing_test.add_char(c);
-                        }
-                        KeyCode::Backspace if self.typing_test.is_test_started() && !self.typing_test.is_test_completed() => {
-                            self.typing_test.remove_char();
-                        }
-                        _ => {}
+            if let Event::Key(key) = event::read()?
+                && key.kind == KeyEventKind::Press {
+                match key.code {
+                    KeyCode::Char('q') => return Ok(()),
+                    KeyCode::Char('r') if self.typing_test.show_results() => {
+                        self.typing_test.reset();
                     }
+                    KeyCode::Enter if !self.typing_test.is_test_started() => {
+                        self.typing_test.start_test();
+                    }
+                    KeyCode::Char(c)
+                        if self.typing_test.is_test_started()
+                            && !self.typing_test.is_test_completed() =>
+                    {
+                        self.typing_test.add_char(c);
+                    }
+                    KeyCode::Backspace
+                        if self.typing_test.is_test_started()
+                            && !self.typing_test.is_test_completed() =>
+                    {
+                        self.typing_test.remove_char();
+                    }
+                    _ => {}
                 }
             }
         }
